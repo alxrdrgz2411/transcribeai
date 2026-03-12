@@ -1317,7 +1317,7 @@ footer p { font-size: 13px; color: rgba(255,255,255,0.3); }
 function goToApp() {
   // En producción: window.location.href = '/app.html'
   const url = document.getElementById('heroYtInput')?.value;
-  alert('¡Aquí irá la app de transcripción! Conecta app.html para que funcione.');
+  window.location.href = 'app.html';
 }
 
 function toggleFAQ(btn) {
