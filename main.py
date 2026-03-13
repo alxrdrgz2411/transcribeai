@@ -54,9 +54,31 @@ TEMP_DIR.mkdir(exist_ok=True)
 # Cliente OpenAI (usa variable de entorno OPENAI_API_KEY)
 client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-# ──────────────────────────────────────────────
-# MODELOS (schemas)
-# ──────────────────────────────────────────────
+# ── DIAGNÓSTICO TEMPORAL (borrar después) ──
+@app.get("/debug/ytdlp")
+async def debug_ytdlp():
+    """Prueba yt-dlp directamente para ver el error exacto"""
+    try:
+        # Ver versión instalada
+        v = subprocess.run(["yt-dlp", "--version"], capture_output=True, text=True, timeout=10)
+        version = v.stdout.strip()
+
+        # Intentar descargar info sin descargar el archivo
+        cmd = ["yt-dlp", "--dump-json", "--no-warnings", "--no-playlist",
+               "https://www.youtube.com/watch?v=95gDiOTvHus"]
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
+
+        return {
+            "yt_dlp_version": version,
+            "returncode": result.returncode,
+            "stdout_preview": result.stdout[:500] if result.stdout else "",
+            "stderr": result.stderr[:1000] if result.stderr else "",
+        }
+    except Exception as e:
+        return {"error": str(e)}
+
+
+
 
 class TranscribeYouTubeRequest(BaseModel):
     url: str
