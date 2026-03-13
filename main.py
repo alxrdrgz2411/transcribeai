@@ -28,6 +28,17 @@ app = FastAPI(
     version="1.0.0",
 )
 
+# Auto-actualizar yt-dlp al arrancar (YouTube rompe versiones viejas frecuentemente)
+@app.on_event("startup")
+async def startup_event():
+    try:
+        subprocess.run(
+            ["pip", "install", "--upgrade", "yt-dlp", "-q"],
+            capture_output=True, timeout=60
+        )
+    except Exception:
+        pass  # No bloquear el arranque si falla
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # En producción: reemplaza con tu dominio
@@ -126,7 +137,9 @@ def extract_youtube_audio(url: str, output_path: Path) -> Path:
         "--audio-quality", "3",
         "--output", str(output_path / "%(id)s.%(ext)s"),
         "--no-playlist",
-        "--no-warnings",        # suprimir warnings de dependencias
+        "--no-warnings",
+        "--extractor-retries", "3",
+        "--socket-timeout", "30",
         url,
     ]
     result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
