@@ -126,19 +126,35 @@ def extract_youtube_audio(url: str, output_path: Path) -> Path:
         "--audio-quality", "3",
         "--output", str(output_path / "%(id)s.%(ext)s"),
         "--no-playlist",
+        "--no-warnings",        # suprimir warnings de dependencias
         url,
     ]
     result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
+
+    # Verificar si el archivo se descargó correctamente (lo que importa es el archivo, no el código)
+    files = list(output_path.glob("*.mp3"))
+    if files:
+        return files[0]
+
+    # Solo lanzar error si no hay archivo Y hubo error real (no solo warnings)
     if result.returncode != 0:
+        # Filtrar líneas que son solo warnings de urllib3/charset_normalizer
+        error_lines = [
+            line for line in result.stderr.splitlines()
+            if line.strip()
+            and "WARNING" not in line.upper()
+            and "DeprecationWarning" not in line
+            and "RequestsDependencyWarning" not in line
+            and "charset_normalizer" not in line
+            and "urllib3" not in line
+        ]
+        error_msg = "\n".join(error_lines[:5]) if error_lines else result.stderr[:200]
         raise HTTPException(
             status_code=422,
-            detail=f"No se pudo descargar el video: {result.stderr[:200]}"
+            detail=f"No se pudo descargar el video. Verifica que el link sea público y válido."
         )
-    # Encontrar el archivo descargado
-    files = list(output_path.glob("*.mp3"))
-    if not files:
-        raise HTTPException(status_code=500, detail="No se generó archivo de audio")
-    return files[0]
+
+    raise HTTPException(status_code=500, detail="No se generó archivo de audio")
 
 
 def transcribe_with_whisper(
