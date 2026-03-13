@@ -3,1346 +3,1056 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Escríbelo — Tu video en texto, en segundos</title>
-<meta name="description" content="Pega el link de YouTube o sube tu archivo. En segundos tienes el texto completo. Así de fácil. La herramienta de transcripción hecha para latinos.">
+<title>Escríbelo — App</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
+  --bg: #0a0a0f;
+  --s1: #111118;
+  --s2: #18181f;
+  --s3: #1f1f28;
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.13);
   --naranja: #FF6B2B;
-  --amarillo: #FFD93D;
+  --accent: #FF6B2B;
+  --accent2: #4D96FF;
+  --accent3: #ff6b47;
   --verde: #6BCB77;
-  --azul: #4D96FF;
-  --morado: #C77DFF;
-  --rosa: #FF6B9D;
-  --bg: #FFFBF5;
-  --bg2: #FFF5E9;
-  --dark: #1A1A2E;
-  --dark2: #2D2D44;
-  --text: #2D2D44;
-  --muted: #8B8B9E;
-  --border: rgba(45,45,68,0.1);
+  --amarillo: #FFD93D;
+  --text: #f0f0f5;
+  --muted: #7a7a8a;
+  --muted2: #55555f;
   --font-d: 'Nunito', sans-serif;
   --font-b: 'Plus Jakarta Sans', sans-serif;
-  --radius: 16px;
-  --shadow: 0 8px 40px rgba(255,107,43,0.15);
+  --radius: 12px;
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
-html { scroll-behavior: smooth; }
-
+html { height:100%; }
 body {
   font-family: var(--font-b);
   background: var(--bg);
   color: var(--text);
-  overflow-x: hidden;
-}
-
-/* ── NOISE TEXTURE ── */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0.4;
-}
-
-/* ── NAV ── */
-nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 16px 60px;
-  background: rgba(255,251,245,0.85);
-  backdrop-filter: blur(20px);
-  border-bottom: 2px solid var(--border);
-}
-
-.nav-logo {
-  font-family: var(--font-d);
-  font-weight: 900;
-  font-size: 26px;
-  color: var(--dark);
-  text-decoration: none;
-  display: flex; align-items: center; gap: 8px;
-}
-
-.logo-dot {
-  width: 10px; height: 10px;
-  background: var(--naranja);
-  border-radius: 50%;
-  display: inline-block;
-  animation: bounce-dot 2s infinite;
-}
-
-@keyframes bounce-dot {
-  0%,100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
-}
-
-.nav-links {
-  display: flex; gap: 32px; list-style: none;
-}
-
-.nav-links a {
-  color: var(--muted);
-  text-decoration: none;
-  font-size: 15px;
-  font-weight: 600;
-  transition: color .2s;
-}
-
-.nav-links a:hover { color: var(--naranja); }
-
-.nav-cta { display: flex; gap: 10px; align-items: center; }
-
-.btn-ghost {
-  background: none;
-  border: 2px solid var(--border);
-  color: var(--text);
-  padding: 10px 22px;
-  border-radius: 100px;
-  font-size: 14px;
-  font-weight: 700;
-  font-family: var(--font-b);
-  cursor: pointer;
-  transition: all .2s;
-  text-decoration: none;
-}
-.btn-ghost:hover { border-color: var(--naranja); color: var(--naranja); }
-
-.btn-primary {
-  background: var(--naranja);
-  border: 2px solid var(--naranja);
-  color: white;
-  padding: 10px 22px;
-  border-radius: 100px;
-  font-size: 14px;
-  font-weight: 700;
-  font-family: var(--font-b);
-  cursor: pointer;
-  transition: all .2s;
-  text-decoration: none;
-  box-shadow: 0 4px 20px rgba(255,107,43,0.35);
-}
-.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(255,107,43,0.45); }
-
-/* ── HERO ── */
-.hero {
-  min-height: 100vh;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  text-align: center;
-  padding: 120px 40px 80px;
-  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
 }
 
-/* Blobs de color */
-.blob {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.25;
-  pointer-events: none;
-}
-.blob-1 { width: 500px; height: 500px; background: var(--naranja); top: -100px; left: -100px; animation: float1 8s infinite ease-in-out; }
-.blob-2 { width: 400px; height: 400px; background: var(--azul); top: 100px; right: -80px; animation: float2 10s infinite ease-in-out; }
-.blob-3 { width: 350px; height: 350px; background: var(--amarillo); bottom: -50px; left: 30%; animation: float3 9s infinite ease-in-out; }
-.blob-4 { width: 300px; height: 300px; background: var(--morado); bottom: 100px; right: 10%; animation: float1 11s infinite ease-in-out reverse; }
-
-@keyframes float1 {
-  0%,100% { transform: translate(0,0) scale(1); }
-  33% { transform: translate(30px,-20px) scale(1.05); }
-  66% { transform: translate(-20px,15px) scale(0.95); }
-}
-@keyframes float2 {
-  0%,100% { transform: translate(0,0) scale(1); }
-  33% { transform: translate(-25px,20px) scale(1.08); }
-  66% { transform: translate(15px,-10px) scale(0.96); }
-}
-@keyframes float3 {
-  0%,100% { transform: translate(0,0) scale(1); }
-  50% { transform: translate(20px,-25px) scale(1.06); }
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: 56px;
+  background: var(--s1);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  gap: 16px;
 }
 
-.hero-badge {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: white;
-  border: 2px solid rgba(255,107,43,0.2);
-  padding: 8px 18px;
+.logo {
+  font-family: var(--font-d);
+  font-weight: 900;
+  font-size: 20px;
+  letter-spacing: -0.5px;
+  white-space: nowrap;
+  text-decoration: none;
+  color: var(--text);
+  display: flex; align-items: center; gap: 6px;
+}
+.logo-dot { width: 8px; height: 8px; background: var(--naranja); border-radius: 50%; display: inline-block; }
+
+.topbar-center {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.source-tabs {
+  display: flex;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.stab {
+  background: none;
+  border: none;
+  color: var(--muted);
+  padding: 7px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: var(--font-b);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .2s;
+  display: flex; align-items: center; gap: 6px;
+  white-space: nowrap;
+}
+.stab.active { background: var(--s2); color: var(--text); }
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.credits-pill {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,107,43,0.1);
+  border: 1px solid rgba(255,107,43,0.25);
+  padding: 6px 12px;
   border-radius: 100px;
   font-size: 13px;
+  white-space: nowrap;
+}
+.credits-pill strong { color: var(--naranja); font-weight: 700; }
+
+.btn-sm {
+  padding: 7px 16px;
+  border-radius: 7px;
+  font-size: 13px;
   font-weight: 700;
-  color: var(--naranja);
-  margin-bottom: 28px;
-  animation: fadeUp .5s ease both;
-  box-shadow: 0 4px 20px rgba(255,107,43,0.1);
-  position: relative; z-index: 1;
-}
-
-.badge-pulse {
-  width: 8px; height: 8px;
-  background: var(--verde);
-  border-radius: 50%;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%,100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(107,203,119,0.5); }
-  50% { transform: scale(1.2); box-shadow: 0 0 0 6px rgba(107,203,119,0); }
-}
-
-.hero h1 {
-  font-family: var(--font-d);
-  font-size: clamp(48px, 7vw, 88px);
-  font-weight: 900;
-  line-height: 1.0;
-  letter-spacing: -2px;
-  max-width: 920px;
-  position: relative; z-index: 1;
-  animation: fadeUp .6s .1s ease both;
-}
-
-.hero h1 .word-1 { color: var(--naranja); }
-.hero h1 .word-2 {
-  background: linear-gradient(135deg, var(--azul), var(--morado));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-.hero h1 .word-3 { color: var(--verde); }
-
-.hero-sub {
-  font-size: 20px;
-  color: var(--muted);
-  max-width: 580px;
-  margin: 24px auto 40px;
-  font-weight: 400;
-  line-height: 1.7;
-  position: relative; z-index: 1;
-  animation: fadeUp .6s .2s ease both;
-}
-
-.hero-sub strong { color: var(--text); font-weight: 700; }
-
-/* ── DEMO INPUT ── */
-.hero-demo {
-  position: relative; z-index: 1;
-  width: 100%; max-width: 640px;
-  animation: fadeUp .6s .3s ease both;
-}
-
-.demo-card {
-  background: white;
-  border: 2px solid var(--border);
-  border-radius: 20px;
-  padding: 8px;
-  box-shadow: 0 20px 60px rgba(45,45,68,0.12);
-  display: flex; gap: 8px;
-}
-
-.demo-input {
-  flex: 1;
-  background: var(--bg2);
-  border: 2px solid transparent;
-  border-radius: 14px;
-  padding: 14px 18px;
-  font-size: 15px;
   font-family: var(--font-b);
+  cursor: pointer;
+  transition: all .2s;
+  border: none;
+  white-space: nowrap;
+}
+.btn-accent { background: var(--naranja); color: white; }
+.btn-accent:hover { opacity: .87; }
+.btn-outline { background: none; border: 1px solid var(--border2); color: var(--text); }
+.btn-outline:hover { border-color: var(--naranja); color: var(--naranja); }
+
+.workspace {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.panel-left {
+  width: 340px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  background: var(--s1);
+}
+
+.panel-left::-webkit-scrollbar { width: 4px; }
+.panel-left::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+
+.panel-section {
+  padding: 20px;
+  border-bottom: 1px solid var(--border);
+}
+.panel-section:last-child { border-bottom: none; }
+
+.section-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+
+.upload-zone {
+  border: 2px dashed var(--border2);
+  border-radius: var(--radius);
+  padding: 32px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all .2s;
+  position: relative;
+  overflow: hidden;
+}
+.upload-zone:hover, .upload-zone.hover {
+  border-color: rgba(255,107,43,0.4);
+  background: rgba(255,107,43,0.04);
+}
+.upload-zone input {
+  position: absolute; inset: 0; opacity: 0; cursor: pointer;
+}
+.uz-icon {
+  width: 44px; height: 44px;
+  background: rgba(255,107,43,0.12);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  margin: 0 auto 12px;
+}
+.uz-title { font-family: var(--font-d); font-size: 15px; font-weight: 800; margin-bottom: 5px; }
+.uz-sub { font-size: 12px; color: var(--muted); }
+
+.file-selected {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--s2);
+  border: 1px solid rgba(255,107,43,0.25);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+}
+.file-icon { width: 40px; height: 40px; background: rgba(255,107,43,0.1); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.file-info { flex: 1; min-width: 0; }
+.file-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.file-size { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.file-clear { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 18px; line-height: 1; padding: 2px; }
+.file-clear:hover { color: var(--accent3); }
+
+/* ── FIX: YouTube input always rendered, shown/hidden via display ── */
+#ytSection { display: none; }
+#ytSection.active { display: block; }
+
+.input-field {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border2);
   color: var(--text);
+  padding: 11px 14px;
+  border-radius: 9px;
+  font-size: 14px;
+  font-family: var(--font-b);
   outline: none;
   transition: border-color .2s;
 }
-.demo-input:focus { border-color: var(--naranja); }
-.demo-input::placeholder { color: var(--muted); }
+.input-field:focus { border-color: rgba(255,107,43,0.4); }
+.input-field::placeholder { color: var(--muted); }
 
-.demo-btn {
-  background: var(--naranja);
-  border: none;
-  color: white;
-  padding: 14px 24px;
-  border-radius: 14px;
-  font-size: 15px;
-  font-weight: 800;
-  font-family: var(--font-d);
+.opt-group { display: flex; flex-direction: column; gap: 10px; }
+
+.opt-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 9px;
   cursor: pointer;
-  transition: all .2s;
-  white-space: nowrap;
-  box-shadow: 0 4px 16px rgba(255,107,43,0.4);
-  display: flex; align-items: center; gap: 8px;
-}
-.demo-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,107,43,0.5); }
-
-.demo-divider {
-  display: flex; align-items: center; gap: 12px;
-  margin: 16px 0;
-  color: var(--muted);
-  font-size: 13px;
-  font-weight: 600;
-}
-.demo-divider::before, .demo-divider::after {
-  content: ''; flex: 1;
-  height: 1px; background: var(--border);
-}
-
-.upload-mini {
-  background: white;
-  border: 2px dashed rgba(45,45,68,0.15);
-  border-radius: 14px;
-  padding: 16px;
-  text-align: center;
-  cursor: pointer;
-  transition: all .2s;
-  font-size: 14px;
-  color: var(--muted);
-  font-weight: 600;
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-}
-.upload-mini:hover { border-color: var(--naranja); color: var(--naranja); background: rgba(255,107,43,0.03); }
-
-.hero-trust {
-  display: flex; align-items: center; justify-content: center; gap: 24px;
-  margin-top: 24px;
-  font-size: 13px;
-  color: var(--muted);
-  font-weight: 600;
-  position: relative; z-index: 1;
-  animation: fadeUp .6s .4s ease both;
-  flex-wrap: wrap;
-}
-
-.trust-item { display: flex; align-items: center; gap: 6px; }
-.trust-check { color: var(--verde); font-size: 16px; }
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* ── STATS BAR ── */
-.stats-bar {
-  background: var(--dark);
-  padding: 28px 60px;
-  display: flex; align-items: center; justify-content: center; gap: 0;
-  overflow: hidden;
-}
-
-.stat-item {
-  text-align: center;
-  padding: 0 48px;
-  position: relative;
-}
-
-.stat-item::after {
-  content: '';
-  position: absolute;
-  right: 0; top: 20%; bottom: 20%;
-  width: 1px;
-  background: rgba(255,255,255,0.1);
-}
-
-.stat-item:last-child::after { display: none; }
-
-.stat-num {
-  font-family: var(--font-d);
-  font-size: 36px;
-  font-weight: 900;
-  color: white;
-  line-height: 1;
-  margin-bottom: 4px;
-}
-
-.stat-num span { color: var(--amarillo); }
-.stat-label { font-size: 13px; color: rgba(255,255,255,0.5); font-weight: 500; }
-
-/* ── FEATURES ── */
-.section { padding: 100px 60px; position: relative; }
-
-.section-tag {
-  display: inline-block;
-  background: var(--bg2);
-  border: 2px solid rgba(255,107,43,0.2);
-  color: var(--naranja);
-  padding: 6px 16px;
-  border-radius: 100px;
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  margin-bottom: 16px;
-}
-
-.section-title {
-  font-family: var(--font-d);
-  font-size: clamp(32px, 4vw, 52px);
-  font-weight: 900;
-  letter-spacing: -1.5px;
-  line-height: 1.1;
-}
-
-.section-sub {
-  font-size: 18px;
-  color: var(--muted);
-  margin-top: 12px;
-  font-weight: 400;
-  line-height: 1.6;
-  max-width: 560px;
-}
-
-.features-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  margin-top: 60px;
-}
-
-.feat-card {
-  background: white;
-  border: 2px solid var(--border);
-  border-radius: 20px;
-  padding: 32px;
-  transition: all .3s;
-  position: relative;
-  overflow: hidden;
-}
-
-.feat-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, var(--c1), var(--c2));
-  transform: scaleX(0);
-  transition: transform .3s;
-  transform-origin: left;
-}
-
-.feat-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 20px 50px rgba(45,45,68,0.1);
-  border-color: transparent;
-}
-
-.feat-card:hover::before { transform: scaleX(1); }
-
-.feat-card.c-naranja { --c1: var(--naranja); --c2: var(--amarillo); }
-.feat-card.c-azul { --c1: var(--azul); --c2: var(--morado); }
-.feat-card.c-verde { --c1: var(--verde); --c2: var(--azul); }
-.feat-card.c-morado { --c1: var(--morado); --c2: var(--rosa); }
-.feat-card.c-rosa { --c1: var(--rosa); --c2: var(--naranja); }
-.feat-card.c-amarillo { --c1: var(--amarillo); --c2: var(--verde); }
-
-.feat-emoji {
-  font-size: 36px;
-  margin-bottom: 16px;
-  display: block;
-}
-
-.feat-card h3 {
-  font-family: var(--font-d);
-  font-size: 20px;
-  font-weight: 800;
-  margin-bottom: 10px;
-  color: var(--dark);
-}
-
-.feat-card p { font-size: 14px; color: var(--muted); line-height: 1.7; }
-
-/* ── HOW IT WORKS ── */
-.how-section {
-  background: var(--dark);
-  padding: 100px 60px;
-  overflow: hidden;
-  position: relative;
-}
-
-.how-section .section-tag { background: rgba(255,255,255,0.08); color: var(--amarillo); border-color: rgba(255,217,61,0.3); }
-.how-section .section-title { color: white; }
-.how-section .section-sub { color: rgba(255,255,255,0.5); }
-
-.steps-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 24px;
-  margin-top: 60px;
-  position: relative;
-}
-
-.steps-grid::before {
-  content: '';
-  position: absolute;
-  top: 36px; left: 12.5%;
-  width: 75%;
-  height: 2px;
-  background: linear-gradient(90deg, var(--naranja), var(--amarillo), var(--verde), var(--azul));
-  opacity: 0.3;
-}
-
-.step-card {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 20px;
-  padding: 28px 24px;
-  text-align: center;
-  position: relative;
-  transition: all .3s;
-}
-
-.step-card:hover {
-  background: rgba(255,255,255,0.08);
-  transform: translateY(-4px);
-}
-
-.step-num {
-  width: 56px; height: 56px;
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-d);
-  font-size: 22px;
-  font-weight: 900;
-  margin: 0 auto 20px;
-  position: relative; z-index: 1;
-}
-
-.step-num.s1 { background: rgba(255,107,43,0.2); color: var(--naranja); border: 2px solid var(--naranja); }
-.step-num.s2 { background: rgba(255,217,61,0.2); color: var(--amarillo); border: 2px solid var(--amarillo); }
-.step-num.s3 { background: rgba(107,203,119,0.2); color: var(--verde); border: 2px solid var(--verde); }
-.step-num.s4 { background: rgba(77,150,255,0.2); color: var(--azul); border: 2px solid var(--azul); }
-
-.step-card h4 {
-  font-family: var(--font-d);
-  font-size: 17px;
-  font-weight: 800;
-  color: white;
-  margin-bottom: 8px;
-}
-
-.step-card p { font-size: 13px; color: rgba(255,255,255,0.45); line-height: 1.6; }
-
-/* ── USE CASES ── */
-.cases-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-  margin-top: 60px;
-}
-
-.case-card {
-  border-radius: 20px;
-  padding: 32px;
-  display: flex; gap: 20px;
-  align-items: flex-start;
-  border: 2px solid var(--border);
-  background: white;
-  transition: all .3s;
-  cursor: default;
-}
-
-.case-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 16px 40px rgba(45,45,68,0.08);
-}
-
-.case-icon {
-  width: 56px; height: 56px;
-  border-radius: 14px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 26px;
-  flex-shrink: 0;
-}
-
-.case-icon.naranja { background: rgba(255,107,43,0.1); }
-.case-icon.azul { background: rgba(77,150,255,0.1); }
-.case-icon.verde { background: rgba(107,203,119,0.1); }
-.case-icon.morado { background: rgba(199,125,255,0.1); }
-
-.case-card h3 {
-  font-family: var(--font-d);
-  font-size: 18px; font-weight: 800;
-  margin-bottom: 8px;
-  color: var(--dark);
-}
-
-.case-card p { font-size: 14px; color: var(--muted); line-height: 1.7; }
-
-/* ── PRICING ── */
-.pricing-section { background: var(--bg2); padding: 100px 60px; }
-
-.pricing-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  margin-top: 60px;
-  max-width: 1000px;
-  margin-left: auto; margin-right: auto;
-}
-
-.plan-card {
-  background: white;
-  border: 2px solid var(--border);
-  border-radius: 24px;
-  padding: 36px;
-  position: relative;
-  transition: all .3s;
-}
-
-.plan-card:hover { transform: translateY(-6px); box-shadow: 0 24px 60px rgba(45,45,68,0.1); }
-
-.plan-card.popular {
-  border-color: var(--naranja);
-  background: linear-gradient(180deg, rgba(255,107,43,0.04), white);
-}
-
-.popular-tag {
-  position: absolute;
-  top: -14px; left: 50%;
-  transform: translateX(-50%);
-  background: linear-gradient(135deg, var(--naranja), #FF8C42);
-  color: white;
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  padding: 5px 16px;
-  border-radius: 100px;
-  white-space: nowrap;
-  box-shadow: 0 4px 16px rgba(255,107,43,0.4);
-}
-
-.plan-name {
-  font-family: var(--font-d);
-  font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 12px;
-}
-
-.plan-price {
-  font-family: var(--font-d);
-  font-size: 52px;
-  font-weight: 900;
-  letter-spacing: -2px;
-  line-height: 1;
-  color: var(--dark);
-  margin-bottom: 4px;
-}
-
-.plan-price sup { font-size: 24px; vertical-align: super; letter-spacing: 0; }
-.plan-price span { font-size: 18px; font-weight: 400; color: var(--muted); letter-spacing: 0; }
-
-.plan-desc { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
-
-.plan-divider { height: 2px; background: var(--border); margin: 20px 0; border-radius: 2px; }
-
-.plan-features { list-style: none; }
-
-.plan-features li {
-  font-size: 14px;
-  color: var(--text);
-  padding: 7px 0;
-  display: flex; align-items: center; gap: 10px;
-  font-weight: 500;
-}
-
-.plan-features li .check { color: var(--verde); font-size: 16px; font-weight: 900; }
-.plan-features li.na { color: var(--muted); font-weight: 400; }
-.plan-features li.na .check { color: rgba(139,139,158,0.3); }
-
-.plan-btn {
-  width: 100%;
-  margin-top: 28px;
-  padding: 14px;
-  border-radius: 14px;
-  font-size: 15px;
-  font-weight: 800;
-  font-family: var(--font-d);
-  cursor: pointer;
-  transition: all .2s;
-  border: 2px solid;
-}
-
-.plan-btn-solid {
-  background: var(--naranja);
-  border-color: var(--naranja);
-  color: white;
-  box-shadow: 0 6px 20px rgba(255,107,43,0.35);
-}
-.plan-btn-solid:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(255,107,43,0.45); }
-
-.plan-btn-outline {
-  background: none;
-  border-color: var(--border);
-  color: var(--text);
-}
-.plan-btn-outline:hover { border-color: var(--naranja); color: var(--naranja); }
-
-.pricing-note {
-  text-align: center;
-  margin-top: 28px;
-  font-size: 13px;
-  color: var(--muted);
-  font-weight: 500;
-}
-
-/* ── TESTIMONIALS ── */
-.testimonials-section { padding: 100px 60px; }
-
-.testimonials-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  margin-top: 60px;
-}
-
-.testi-card {
-  background: white;
-  border: 2px solid var(--border);
-  border-radius: 20px;
-  padding: 28px;
-  transition: all .3s;
-}
-
-.testi-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(45,45,68,0.08); }
-
-.testi-stars { color: var(--amarillo); font-size: 18px; margin-bottom: 14px; letter-spacing: 2px; }
-
-.testi-text {
-  font-size: 15px;
-  line-height: 1.7;
-  color: var(--text);
-  margin-bottom: 20px;
-  font-style: italic;
-}
-
-.testi-author {
-  display: flex; align-items: center; gap: 12px;
-}
-
-.testi-avatar {
-  width: 44px; height: 44px;
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 20px;
-  flex-shrink: 0;
-}
-
-.testi-name { font-weight: 700; font-size: 14px; color: var(--dark); }
-.testi-role { font-size: 12px; color: var(--muted); margin-top: 2px; }
-
-/* ── FAQ ── */
-.faq-section { background: var(--bg2); padding: 100px 60px; }
-
-.faq-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-  margin-top: 60px;
-  max-width: 900px;
-  margin-left: auto; margin-right: auto;
-}
-
-.faq-card {
-  background: white;
-  border: 2px solid var(--border);
-  border-radius: 16px;
-  overflow: hidden;
   transition: border-color .2s;
 }
+.opt-row:hover { border-color: var(--border2); }
+.opt-label { font-size: 13px; font-weight: 500; }
+.opt-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
 
-.faq-card:hover { border-color: rgba(255,107,43,0.3); }
-
-.faq-q {
-  width: 100%;
-  background: none;
+select.opt-select {
+  background: transparent;
   border: none;
-  padding: 20px 24px;
-  text-align: left;
-  font-size: 15px;
-  font-family: var(--font-d);
-  font-weight: 800;
-  color: var(--dark);
-  cursor: pointer;
-  display: flex; justify-content: space-between; align-items: center; gap: 12px;
-}
-
-.faq-arrow {
-  width: 28px; height: 28px;
-  background: var(--bg2);
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  color: var(--naranja);
-  font-size: 18px;
-  flex-shrink: 0;
-  transition: transform .3s, background .2s;
-  font-weight: 700;
-}
-
-.faq-card.open .faq-arrow { transform: rotate(45deg); background: var(--naranja); color: white; }
-
-.faq-a {
-  font-size: 14px;
   color: var(--muted);
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height .35s ease, padding .3s;
-  line-height: 1.7;
-  padding: 0 24px;
+  font-size: 12px;
+  font-family: var(--font-b);
+  cursor: pointer;
+  outline: none;
+  text-align: right;
 }
+select.opt-select option { background: var(--s2); }
 
-.faq-card.open .faq-a { max-height: 200px; padding: 0 24px 20px; }
-
-/* ── CTA FINAL ── */
-.cta-section {
-  padding: 100px 60px;
-  text-align: center;
+.toggle {
+  width: 36px; height: 20px;
+  background: var(--s3);
+  border-radius: 10px;
   position: relative;
-  overflow: hidden;
+  transition: background .2s;
+  flex-shrink: 0;
 }
-
-.cta-bg {
-  position: absolute; inset: 0;
-  background: linear-gradient(135deg, var(--naranja), #FF8C42, var(--amarillo));
-  z-index: 0;
+.toggle.on { background: var(--naranja); }
+.toggle::after {
+  content: '';
+  position: absolute;
+  width: 14px; height: 14px;
+  background: white;
+  border-radius: 50%;
+  top: 3px; left: 3px;
+  transition: transform .2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
+.toggle.on::after { transform: translateX(16px); }
 
-.cta-section * { position: relative; z-index: 1; }
+.cost-estimate {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 12px;
+  background: rgba(255,107,43,0.06);
+  border: 1px solid rgba(255,107,43,0.18);
+  border-radius: 9px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.cost-estimate strong { color: var(--naranja); }
 
-.cta-section h2 {
-  font-family: var(--font-d);
-  font-size: clamp(36px, 5vw, 64px);
-  font-weight: 900;
+.run-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--naranja);
+  border: none;
+  border-radius: var(--radius);
   color: white;
-  letter-spacing: -2px;
-  line-height: 1.1;
+  font-family: var(--font-d);
+  font-size: 15px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: all .2s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  box-shadow: 0 4px 20px rgba(255,107,43,0.35);
+}
+.run-btn:hover:not(:disabled) { opacity: .87; transform: translateY(-1px); }
+.run-btn:disabled { opacity: .35; cursor: not-allowed; transform: none; box-shadow: none; }
+
+.panel-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted2);
+  text-align: center;
+  padding: 40px;
+}
+.empty-icon { font-size: 48px; margin-bottom: 20px; opacity: .4; }
+.empty-state h3 { font-family: var(--font-d); font-size: 20px; font-weight: 800; color: var(--muted); margin-bottom: 8px; }
+.empty-state p { font-size: 14px; max-width: 320px; line-height: 1.6; }
+
+.progress-state {
+  display: none;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  text-align: center;
+}
+.progress-state.show { display: flex; }
+
+.progress-ring-wrap { position: relative; width: 100px; height: 100px; margin-bottom: 28px; }
+.progress-ring { transform: rotate(-90deg); }
+.progress-ring-bg { fill: none; stroke: var(--s3); stroke-width: 6; }
+.progress-ring-fill {
+  fill: none; stroke: var(--naranja); stroke-width: 6;
+  stroke-linecap: round;
+  stroke-dasharray: 251.2;
+  stroke-dashoffset: 251.2;
+  transition: stroke-dashoffset .5s ease;
+}
+.progress-pct {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-d);
+  font-size: 22px; font-weight: 900; color: var(--naranja);
+}
+.progress-state h3 { font-family: var(--font-d); font-size: 18px; font-weight: 800; margin-bottom: 8px; }
+.progress-state p { font-size: 13px; color: var(--muted); }
+
+.progress-steps { display: flex; flex-direction: column; gap: 10px; margin-top: 28px; text-align: left; min-width: 260px; }
+.pstep { display: flex; align-items: center; gap: 12px; font-size: 13px; color: var(--muted2); transition: color .3s; }
+.pstep.active { color: var(--text); }
+.pstep.done { color: var(--verde); }
+.pstep-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--s3); flex-shrink: 0; transition: background .3s; }
+.pstep.active .pstep-dot { background: var(--naranja); animation: pulse-dot 1s infinite; }
+.pstep.done .pstep-dot { background: var(--verde); }
+
+@keyframes pulse-dot { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: .6; } }
+
+.result-state { display: none; flex: 1; flex-direction: column; overflow: hidden; }
+.result-state.show { display: flex; }
+
+.result-toolbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--s1);
+  flex-shrink: 0;
+  flex-wrap: wrap; gap: 10px;
+}
+
+.result-tabs { display: flex; gap: 4px; }
+.rtab { background: none; border: none; color: var(--muted); font-size: 13px; font-family: var(--font-b); font-weight: 500; padding: 6px 12px; border-radius: 6px; cursor: pointer; transition: all .2s; }
+.rtab.active { background: var(--s3); color: var(--text); }
+
+.result-actions { display: flex; gap: 8px; }
+
+.action-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 7px 13px;
+  background: var(--s2);
+  border: 1px solid var(--border2);
+  color: var(--muted);
+  border-radius: 7px;
+  font-size: 12px;
+  font-family: var(--font-b);
+  cursor: pointer;
+  transition: all .2s;
+  white-space: nowrap;
+}
+.action-btn:hover { color: var(--naranja); border-color: rgba(255,107,43,0.3); }
+
+.result-body { flex: 1; display: flex; overflow: hidden; }
+
+.result-pane { display: none; flex: 1; flex-direction: column; overflow: hidden; }
+.result-pane.active { display: flex; }
+
+.transcript-editor-wrap { flex: 1; overflow-y: auto; padding: 24px; }
+.transcript-editor-wrap::-webkit-scrollbar { width: 4px; }
+.transcript-editor-wrap::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+
+.transcript-editor {
+  width: 100%; min-height: 100%;
+  background: none; border: none;
+  color: var(--text);
+  font-family: var(--font-b);
+  font-size: 15px; line-height: 1.85;
+  resize: none; outline: none;
+  caret-color: var(--naranja);
+}
+.transcript-editor::selection { background: rgba(255,107,43,0.2); }
+
+.editor-toolbar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 20px;
+  border-top: 1px solid var(--border);
+  background: var(--s1);
+  flex-shrink: 0;
+}
+.editor-hint { font-size: 12px; color: var(--muted2); flex: 1; }
+.word-count { font-size: 12px; color: var(--muted); }
+
+.ai-pane { flex: 1; padding: 24px; overflow-y: auto; font-size: 14px; line-height: 1.85; color: var(--text); }
+
+.ai-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(77,150,255,0.1);
+  border: 1px solid rgba(77,150,255,0.2);
+  color: var(--accent2);
+  padding: 4px 10px;
+  border-radius: 100px;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.5px; text-transform: uppercase;
   margin-bottom: 16px;
 }
 
-.cta-section p {
-  font-size: 18px;
-  color: rgba(255,255,255,0.8);
-  margin-bottom: 40px;
-  max-width: 500px;
-  margin-left: auto; margin-right: auto;
+.meta-bar {
+  display: flex; align-items: center; gap: 16px;
+  padding: 10px 20px;
+  background: var(--s1);
+  border-top: 1px solid var(--border);
+  flex-shrink: 0; flex-wrap: wrap;
 }
+.meta-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+.meta-item strong { color: var(--text); }
+.meta-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--border2); }
 
-.btn-white {
-  background: white;
-  border: none;
-  color: var(--naranja);
-  padding: 18px 44px;
-  border-radius: 100px;
-  font-size: 18px;
-  font-weight: 900;
-  font-family: var(--font-d);
-  cursor: pointer;
-  transition: all .2s;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.2);
-  text-decoration: none;
-  display: inline-block;
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 200;
+  align-items: center; justify-content: center;
+  backdrop-filter: blur(4px);
 }
-
-.btn-white:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 16px 40px rgba(0,0,0,0.25); }
-
-.cta-note { font-size: 14px; color: rgba(255,255,255,0.7); margin-top: 16px; font-weight: 600; }
-
-/* ── FOOTER ── */
-footer {
-  background: var(--dark);
-  padding: 48px 60px;
+.modal-overlay.show { display: flex; }
+.modal {
+  background: var(--s1);
+  border: 1px solid var(--border2);
+  border-radius: 16px;
+  padding: 32px;
+  width: 90%; max-width: 460px;
+  animation: modal-in .2s ease;
+}
+@keyframes modal-in { from { opacity:0; transform:scale(.95) translateY(10px); } to { opacity:1; transform:scale(1) translateY(0); } }
+.modal h2 { font-family: var(--font-d); font-size: 22px; font-weight: 900; margin-bottom: 8px; }
+.modal p { font-size: 14px; color: var(--muted); margin-bottom: 24px; }
+.modal-plans { display: flex; flex-direction: column; gap: 10px; }
+.modal-plan {
   display: flex; align-items: center; justify-content: space-between;
-  flex-wrap: wrap; gap: 20px;
-}
-
-.footer-logo {
-  font-family: var(--font-d);
-  font-weight: 900;
-  font-size: 22px;
-  color: white;
-  text-decoration: none;
-}
-
-.footer-logo span { color: var(--naranja); }
-
-.footer-links { display: flex; gap: 28px; flex-wrap: wrap; }
-
-.footer-links a {
-  font-size: 13px;
-  color: rgba(255,255,255,0.4);
-  text-decoration: none;
-  font-weight: 500;
-  transition: color .2s;
-}
-
-.footer-links a:hover { color: rgba(255,255,255,0.8); }
-
-footer p { font-size: 13px; color: rgba(255,255,255,0.3); }
-
-/* ── FLOATING DEMO BADGE ── */
-.floating-demo {
-  position: fixed;
-  bottom: 28px; right: 28px;
-  background: var(--naranja);
-  color: white;
-  padding: 14px 22px;
-  border-radius: 100px;
-  font-family: var(--font-d);
-  font-size: 15px;
-  font-weight: 800;
+  padding: 14px 16px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
   cursor: pointer;
-  box-shadow: 0 8px 30px rgba(255,107,43,0.5);
-  z-index: 99;
-  transition: all .2s;
-  text-decoration: none;
-  display: flex; align-items: center; gap: 8px;
-  animation: float-btn 3s infinite ease-in-out;
+  transition: border-color .2s;
 }
+.modal-plan:hover { border-color: var(--naranja); }
+.modal-plan.popular { border-color: rgba(255,107,43,0.4); }
+.modal-plan-name { font-family: var(--font-d); font-size: 15px; font-weight: 800; }
+.modal-plan-desc { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.modal-plan-price { font-family: var(--font-d); font-size: 18px; font-weight: 900; color: var(--naranja); }
+.modal-close { float: right; background: none; border: none; color: var(--muted); font-size: 22px; cursor: pointer; }
+.modal-close:hover { color: var(--text); }
 
-.floating-demo:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 14px 40px rgba(255,107,43,0.6); }
-
-@keyframes float-btn {
-  0%,100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
+.toast {
+  position: fixed; bottom: 24px; right: 24px;
+  background: var(--s2); border: 1px solid var(--border2);
+  border-radius: 10px; padding: 12px 18px;
+  font-size: 13px; color: var(--text);
+  transform: translateY(80px); opacity: 0;
+  transition: all .3s ease;
+  z-index: 300; max-width: 300px;
 }
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast.success { border-color: rgba(107,203,119,0.3); }
+.toast.error { border-color: rgba(255,107,71,0.3); color: var(--accent3); }
 
-/* ── RESPONSIVE ── */
-@media (max-width: 960px) {
-  nav { padding: 14px 24px; }
-  .nav-links { display: none; }
-  .section { padding: 60px 24px; }
-  .how-section, .pricing-section, .faq-section, .cta-section, .testimonials-section { padding: 60px 24px; }
-  .stats-bar { padding: 28px 24px; flex-wrap: wrap; gap: 20px; }
-  .stat-item { padding: 0 20px; }
-  .features-grid { grid-template-columns: 1fr; }
-  .steps-grid { grid-template-columns: repeat(2, 1fr); }
-  .steps-grid::before { display: none; }
-  .cases-grid { grid-template-columns: 1fr; }
-  .pricing-grid { grid-template-columns: 1fr; max-width: 400px; }
-  .testimonials-grid { grid-template-columns: 1fr; }
-  .faq-grid { grid-template-columns: 1fr; }
-  footer { padding: 32px 24px; flex-direction: column; align-items: flex-start; }
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+
+@media (max-width: 768px) {
+  .panel-left { width: 100%; border-right: none; border-bottom: 1px solid var(--border); max-height: 50vh; }
+  .workspace { flex-direction: column; }
+  .topbar { padding: 0 16px; }
+  .topbar-center { display: none; }
 }
 </style>
 </head>
 <body>
 
-<!-- NAV -->
-<nav>
-  <a href="#" class="nav-logo">
-    Escríbelo<div class="logo-dot"></div>
-  </a>
-  <ul class="nav-links">
-    <li><a href="#features">Funciones</a></li>
-    <li><a href="#how">Cómo funciona</a></li>
-    <li><a href="#pricing">Precios</a></li>
-    <li><a href="#faq">FAQ</a></li>
-  </ul>
-  <div class="nav-cta">
-    <a href="#app" class="btn-ghost">Entrar</a>
-    <a href="#pricing" class="btn-primary">Pruébalo gratis</a>
-  </div>
-</nav>
-
-<!-- HERO -->
-<section class="hero">
-  <div class="blob blob-1"></div>
-  <div class="blob blob-2"></div>
-  <div class="blob blob-3"></div>
-  <div class="blob blob-4"></div>
-
-  <div class="hero-badge">
-    <div class="badge-pulse"></div>
-    Hecho para latinos, por latinos 🌮
-  </div>
-
-  <h1>
-    Tu video,<br>
-    <span class="word-2">en texto</span>,<br>
-    <span class="word-1">ya.</span>
-  </h1>
-
-  <p class="hero-sub">
-    Pega el link de YouTube o sube tu archivo.<br>
-    <strong>En segundos tienes el texto completo.</strong> Así de fácil.
-  </p>
-
-  <!-- Demo input -->
-  <div class="hero-demo">
-    <div class="demo-card">
-      <input
-        type="url"
-        class="demo-input"
-        id="heroYtInput"
-        placeholder="🔗 Pega aquí tu link de YouTube..."
-      >
-      <button class="demo-btn" onclick="goToApp()">
-        ¡Escríbelo!
-        <span>→</span>
+<header class="topbar">
+  <a href="index.html" class="logo">Escríbelo<div class="logo-dot"></div></a>
+  <div class="topbar-center">
+    <div class="source-tabs">
+      <button class="stab active" onclick="switchSource('file')">
+        📁 Archivo local
+      </button>
+      <button class="stab" onclick="switchSource('yt')">
+        ▶ YouTube
       </button>
     </div>
-    <div class="demo-divider">o</div>
-    <div class="upload-mini" onclick="goToApp()">
-      📁 Sube tu archivo — MP4, MP3, WAV, MOV y más
+  </div>
+  <div class="topbar-right">
+    <div class="credits-pill">
+      ⏱ <strong id="creditsDisplay">30</strong> créditos
     </div>
+    <button class="btn-sm btn-outline" onclick="showCreditsModal()">+ Recargar</button>
+    <button class="btn-sm btn-accent" id="runBtn" onclick="runTranscription()" disabled>
+      Transcribir
+    </button>
   </div>
+</header>
 
-  <div class="hero-trust">
-    <div class="trust-item"><span class="trust-check">✓</span> 3 transcripciones gratis</div>
-    <div class="trust-item"><span class="trust-check">✓</span> Sin tarjeta de crédito</div>
-    <div class="trust-item"><span class="trust-check">✓</span> Más de 90 idiomas</div>
-    <div class="trust-item"><span class="trust-check">✓</span> Resultados en segundos</div>
-  </div>
-</section>
+<main class="workspace">
+  <aside class="panel-left">
 
-<!-- STATS -->
-<div class="stats-bar">
-  <div class="stat-item">
-    <div class="stat-num">95<span>%</span></div>
-    <div class="stat-label">Precisión promedio</div>
-  </div>
-  <div class="stat-item">
-    <div class="stat-num">90<span>+</span></div>
-    <div class="stat-label">Idiomas soportados</div>
-  </div>
-  <div class="stat-item">
-    <div class="stat-num">30<span>s</span></div>
-    <div class="stat-label">Tiempo promedio</div>
-  </div>
-  <div class="stat-item">
-    <div class="stat-num">500<span>MB</span></div>
-    <div class="stat-label">Tamaño máximo</div>
+    <!-- Archivo local -->
+    <div class="panel-section" id="fileSection">
+      <div class="section-label">Fuente de audio</div>
+      <div class="upload-zone" id="uploadZone">
+        <input type="file" id="fileInput" accept="video/*,audio/*" onchange="onFileSelect(event)">
+        <div class="uz-icon">📁</div>
+        <div class="uz-title">Arrastra tu archivo</div>
+        <div class="uz-sub">MP4, MOV, MP3, WAV, M4A, WebM · Máx 500MB</div>
+      </div>
+      <div class="file-selected" id="fileSelected" style="display:none;">
+        <div class="file-icon">🎬</div>
+        <div class="file-info">
+          <div class="file-name" id="fileName">—</div>
+          <div class="file-size" id="fileSize">—</div>
+        </div>
+        <button class="file-clear" onclick="clearFile()">×</button>
+      </div>
+    </div>
+
+    <!-- YouTube — siempre en el DOM, mostrado/ocultado con JS -->
+    <div class="panel-section" id="ytSection">
+      <div class="section-label">URL de YouTube</div>
+      <input
+        type="url"
+        class="input-field"
+        id="ytUrl"
+        placeholder="https://youtube.com/watch?v=..."
+        oninput="onYTInput()"
+      >
+      <div id="ytStatus" style="font-size:12px; margin-top:6px; color:var(--muted);"></div>
+    </div>
+
+    <!-- Opciones -->
+    <div class="panel-section">
+      <div class="section-label">Opciones</div>
+      <div class="opt-group">
+        <div class="opt-row">
+          <div><div class="opt-label">Idioma de entrada</div></div>
+          <select class="opt-select" id="langSelect">
+            <option value="auto">Detectar auto</option>
+            <option value="es">Español</option>
+            <option value="en">English</option>
+            <option value="fr">Français</option>
+            <option value="pt">Português</option>
+            <option value="de">Deutsch</option>
+            <option value="it">Italiano</option>
+            <option value="ja">日本語</option>
+            <option value="zh">中文</option>
+            <option value="ko">한국어</option>
+            <option value="ar">العربية</option>
+            <option value="ru">Русский</option>
+          </select>
+        </div>
+        <div class="opt-row">
+          <div><div class="opt-label">Formato de salida</div></div>
+          <select class="opt-select" id="formatSelect" onchange="updateCostEstimate()">
+            <option value="text">Párrafos</option>
+            <option value="srt">SRT (subtítulos)</option>
+            <option value="timestamps">Con timestamps</option>
+          </select>
+        </div>
+        <div class="opt-row" onclick="toggleOpt('summarize')" style="cursor:pointer;">
+          <div>
+            <div class="opt-label">Resumen con IA</div>
+            <div class="opt-sub">GPT-4o · +2 créditos</div>
+          </div>
+          <div class="toggle" id="toggle-summarize"></div>
+        </div>
+        <div class="opt-row" onclick="toggleOpt('translate')" style="cursor:pointer;">
+          <div>
+            <div class="opt-label">Traducir transcripción</div>
+            <div class="opt-sub">+3 créditos</div>
+          </div>
+          <div class="toggle" id="toggle-translate"></div>
+        </div>
+        <div id="translateLangRow" style="display:none;">
+          <select class="input-field" id="translateLang" style="margin-top:6px;">
+            <option value="en">Traducir a: English</option>
+            <option value="es">Traducir a: Español</option>
+            <option value="fr">Traducir a: Français</option>
+            <option value="pt">Traducir a: Português</option>
+            <option value="de">Traducir a: Deutsch</option>
+            <option value="it">Traducir a: Italiano</option>
+            <option value="ja">Traducir a: 日本語</option>
+            <option value="zh">Traducir a: 中文</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Costo estimado -->
+    <div class="panel-section">
+      <div class="cost-estimate" id="costEstimate">
+        <span>Costo estimado</span>
+        <strong id="costVal">— créditos</strong>
+      </div>
+    </div>
+
+    <!-- Botón transcribir -->
+    <div class="panel-section">
+      <button class="run-btn" id="runBtnBottom" onclick="runTranscription()" disabled>
+        🎙️ ¡Transcribir ahora!
+      </button>
+    </div>
+
+  </aside>
+
+  <section class="panel-right">
+
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">🎙️</div>
+      <h3>Listo para transcribir</h3>
+      <p>Sube un archivo de audio o video, o pega un link de YouTube y presiona "Transcribir".</p>
+    </div>
+
+    <div class="progress-state" id="progressState">
+      <div class="progress-ring-wrap">
+        <svg class="progress-ring" width="100" height="100" viewBox="0 0 100 100">
+          <circle class="progress-ring-bg" cx="50" cy="50" r="40"/>
+          <circle class="progress-ring-fill" id="progressRingFill" cx="50" cy="50" r="40"/>
+        </svg>
+        <div class="progress-pct" id="progressPct">0%</div>
+      </div>
+      <h3 id="progressTitle">Procesando...</h3>
+      <p id="progressSub">Esto puede tomar unos segundos</p>
+      <div class="progress-steps">
+        <div class="pstep" id="step1"><div class="pstep-dot"></div>Cargando archivo</div>
+        <div class="pstep" id="step2"><div class="pstep-dot"></div>Extrayendo audio</div>
+        <div class="pstep" id="step3"><div class="pstep-dot"></div>Transcribiendo con Whisper</div>
+        <div class="pstep" id="step4"><div class="pstep-dot"></div>Procesando con IA</div>
+        <div class="pstep" id="step5"><div class="pstep-dot"></div>Finalizando</div>
+      </div>
+    </div>
+
+    <div class="result-state" id="resultState">
+      <div class="result-toolbar">
+        <div class="result-tabs">
+          <button class="rtab active" onclick="switchResultTab('transcript')">Transcripción</button>
+          <button class="rtab" id="summaryTab" onclick="switchResultTab('summary')" style="display:none;">Resumen IA</button>
+          <button class="rtab" id="translationTab" onclick="switchResultTab('translation')" style="display:none;">Traducción</button>
+        </div>
+        <div class="result-actions">
+          <button class="action-btn" onclick="copyCurrentPane()">📋 Copiar</button>
+          <button class="action-btn" onclick="exportAs('txt')">📄 TXT</button>
+          <button class="action-btn" onclick="exportAs('srt')">🎬 SRT</button>
+          <button class="action-btn" onclick="exportAs('pdf')">📑 PDF</button>
+        </div>
+      </div>
+
+      <div class="result-body">
+        <div class="result-pane active" id="pane-transcript">
+          <div class="transcript-editor-wrap">
+            <textarea class="transcript-editor" id="transcriptEditor" spellcheck="true" placeholder="La transcripción aparecerá aquí..." oninput="updateWordCount()"></textarea>
+          </div>
+          <div class="editor-toolbar">
+            <span class="editor-hint">✏️ Editable — haz clic para corregir errores</span>
+            <span class="word-count" id="wordCount">0 palabras</span>
+          </div>
+        </div>
+        <div class="result-pane" id="pane-summary">
+          <div class="ai-pane">
+            <div class="ai-badge">✨ Resumen generado por IA</div>
+            <div id="summaryContent" style="white-space:pre-wrap;"></div>
+          </div>
+        </div>
+        <div class="result-pane" id="pane-translation">
+          <div class="ai-pane">
+            <div class="ai-badge">🌐 Traducción automática</div>
+            <div id="translationContent" style="white-space:pre-wrap;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="meta-bar" id="metaBar">
+        <div class="meta-item">⏱ Duración: <strong id="metaDuration">—</strong></div>
+        <div class="meta-dot"></div>
+        <div class="meta-item">🌐 Idioma: <strong id="metaLang">—</strong></div>
+        <div class="meta-dot"></div>
+        <div class="meta-item">⚡ Créditos usados: <strong id="metaCredits">—</strong></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- MODAL CRÉDITOS -->
+<div class="modal-overlay" id="creditsModal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <h2>Recargar créditos</h2>
+    <p>Elige el paquete que mejor se adapte. Los créditos nunca caducan.</p>
+    <div class="modal-plans">
+      <div class="modal-plan" onclick="buyPlan('starter')">
+        <div>
+          <div class="modal-plan-name">Starter</div>
+          <div class="modal-plan-desc">200 créditos · ~3 horas de audio</div>
+        </div>
+        <div class="modal-plan-price">$4.99</div>
+      </div>
+      <div class="modal-plan popular" onclick="buyPlan('pro')">
+        <div>
+          <div class="modal-plan-name">⭐ Pro</div>
+          <div class="modal-plan-desc">600 créditos · ~10 horas de audio</div>
+        </div>
+        <div class="modal-plan-price">$9.99</div>
+      </div>
+      <div class="modal-plan" onclick="buyPlan('business')">
+        <div>
+          <div class="modal-plan-name">Business</div>
+          <div class="modal-plan-desc">Ilimitado · Para equipos</div>
+        </div>
+        <div class="modal-plan-price">$24.99/mes</div>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- FEATURES -->
-<section class="section" id="features">
-  <div class="section-tag">Lo que puedes hacer</div>
-  <h2 class="section-title">Todo lo que necesitas,<br>sin rollo.</h2>
-  <p class="section-sub">No más copiar y pegar a mano. No más horas perdidas. Escríbelo lo hace todo.</p>
-
-  <div class="features-grid">
-    <div class="feat-card c-naranja">
-      <span class="feat-emoji">📺</span>
-      <h3>Cualquier video de YouTube</h3>
-      <p>Pega el link y listo. Funciona con videos normales, Shorts y videos largos. Sin descargar nada.</p>
-    </div>
-    <div class="feat-card c-azul">
-      <span class="feat-emoji">📁</span>
-      <h3>Sube tu propio archivo</h3>
-      <p>MP4, MOV, MP3, WAV, M4A, WebM... Si tiene audio, lo transcribimos. Hasta 500MB.</p>
-    </div>
-    <div class="feat-card c-verde">
-      <span class="feat-emoji">🌍</span>
-      <h3>Más de 90 idiomas</h3>
-      <p>Detección automática o elige tú el idioma. Español, inglés, portugués, francés y mucho más.</p>
-    </div>
-    <div class="feat-card c-morado">
-      <span class="feat-emoji">🤖</span>
-      <h3>Resumen con IA</h3>
-      <p>¿Video de 2 horas? Te lo resumimos en 5 oraciones. Ideal para clases, reuniones y podcasts.</p>
-    </div>
-    <div class="feat-card c-rosa">
-      <span class="feat-emoji">🌐</span>
-      <h3>Traducción automática</h3>
-      <p>Transcribe en español y traduce al inglés. O al revés. Soportamos 11 idiomas de traducción.</p>
-    </div>
-    <div class="feat-card c-amarillo">
-      <span class="feat-emoji">📄</span>
-      <h3>Exporta como quieras</h3>
-      <p>Descarga en TXT para copiar y pegar, SRT para subtítulos de video, o PDF para compartir.</p>
-    </div>
-  </div>
-</section>
-
-<!-- HOW IT WORKS -->
-<section class="how-section" id="how">
-  <div class="section-tag">El proceso</div>
-  <h2 class="section-title">4 pasos y ya.</h2>
-  <p class="section-sub">Más fácil que hacerte un café.</p>
-
-  <div class="steps-grid">
-    <div class="step-card">
-      <div class="step-num s1">1</div>
-      <h4>Pega el link o sube el archivo</h4>
-      <p>YouTube, MP4, MP3, WAV o lo que tengas. Nosotros lo aceptamos.</p>
-    </div>
-    <div class="step-card">
-      <div class="step-num s2">2</div>
-      <h4>Elige tus opciones</h4>
-      <p>Idioma, formato de salida, ¿quieres resumen? ¿traducción? Tú decides.</p>
-    </div>
-    <div class="step-card">
-      <div class="step-num s3">3</div>
-      <h4>La IA hace su magia</h4>
-      <p>Whisper AI procesa el audio con precisión de nivel humano. En segundos.</p>
-    </div>
-    <div class="step-card">
-      <div class="step-num s4">4</div>
-      <h4>Copia, edita y descarga</h4>
-      <p>Edita el texto si hay errores, descarga en el formato que necesites.</p>
-    </div>
-  </div>
-</section>
-
-<!-- USE CASES -->
-<section class="section">
-  <div class="section-tag">¿Para quién es?</div>
-  <h2 class="section-title">Para todo el que tenga<br>un video y necesite texto.</h2>
-
-  <div class="cases-grid">
-    <div class="case-card">
-      <div class="case-icon naranja">🎓</div>
-      <div>
-        <h3>Estudiantes</h3>
-        <p>Transcribe tus clases grabadas, entrevistas para tesis o videos educativos. Estudia con el texto en lugar de rebobinar el video una y otra vez.</p>
-      </div>
-    </div>
-    <div class="case-card">
-      <div class="case-icon azul">🎬</div>
-      <div>
-        <h3>Creadores de contenido</h3>
-        <p>Genera subtítulos para tus videos automáticamente. Reutiliza el contenido de tu podcast en posts, newsletters o hilos de Twitter.</p>
-      </div>
-    </div>
-    <div class="case-card">
-      <div class="case-icon verde">📰</div>
-      <div>
-        <h3>Periodistas y escritores</h3>
-        <p>Transcribe entrevistas en segundos en lugar de horas. Enfócate en escribir la historia, no en transcribir.</p>
-      </div>
-    </div>
-    <div class="case-card">
-      <div class="case-icon morado">💼</div>
-      <div>
-        <h3>Equipos y empresas</h3>
-        <p>Convierte tus reuniones grabadas en minutas automáticas. Nunca más "¿de qué acordamos en la llamada?"</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- PRICING -->
-<section class="pricing-section" id="pricing">
-  <div style="text-align:center;">
-    <div class="section-tag">Precios</div>
-    <h2 class="section-title">Paga solo lo que usas.</h2>
-    <p class="section-sub" style="margin:12px auto 0;">Sin suscripciones forzadas. Sin sorpresas. Los créditos no caducan.</p>
-  </div>
-
-  <div class="pricing-grid">
-    <div class="plan-card">
-      <div class="plan-name">Gratis</div>
-      <div class="plan-price"><sup>$</sup>0</div>
-      <div class="plan-desc">Para probar sin compromisos</div>
-      <div class="plan-divider"></div>
-      <ul class="plan-features">
-        <li><span class="check">✓</span> 3 transcripciones gratis</li>
-        <li><span class="check">✓</span> Hasta 30 min por video</li>
-        <li><span class="check">✓</span> Exportar TXT</li>
-        <li><span class="check">✓</span> Detección de idioma</li>
-        <li class="na"><span class="check">—</span> Resumen con IA</li>
-        <li class="na"><span class="check">—</span> Exportar SRT y PDF</li>
-        <li class="na"><span class="check">—</span> Traducción automática</li>
-      </ul>
-      <button class="plan-btn plan-btn-outline" onclick="goToApp()">Comenzar gratis</button>
-    </div>
-
-    <div class="plan-card popular">
-      <div class="popular-tag">⭐ EL MÁS POPULAR</div>
-      <div class="plan-name">Pro</div>
-      <div class="plan-price"><sup>$</sup>9<span>.99</span></div>
-      <div class="plan-desc">~600 minutos de audio</div>
-      <div class="plan-divider"></div>
-      <ul class="plan-features">
-        <li><span class="check">✓</span> 600 créditos (no caducan)</li>
-        <li><span class="check">✓</span> Hasta 3 horas por video</li>
-        <li><span class="check">✓</span> TXT, SRT y PDF</li>
-        <li><span class="check">✓</span> Detección de idioma</li>
-        <li><span class="check">✓</span> Resumen con IA incluido</li>
-        <li><span class="check">✓</span> Traducción a 11 idiomas</li>
-        <li><span class="check">✓</span> Procesamiento prioritario</li>
-      </ul>
-      <button class="plan-btn plan-btn-solid" onclick="goToApp()">Quiero este plan</button>
-    </div>
-
-    <div class="plan-card">
-      <div class="plan-name">Business</div>
-      <div class="plan-price"><sup>$</sup>24<span>.99/mes</span></div>
-      <div class="plan-desc">Para equipos que transciben mucho</div>
-      <div class="plan-divider"></div>
-      <ul class="plan-features">
-        <li><span class="check">✓</span> Créditos ilimitados</li>
-        <li><span class="check">✓</span> Sin límite de duración</li>
-        <li><span class="check">✓</span> Todos los formatos + API</li>
-        <li><span class="check">✓</span> Resumen IA avanzado</li>
-        <li><span class="check">✓</span> Traducción a 90 idiomas</li>
-        <li><span class="check">✓</span> 5 usuarios incluidos</li>
-        <li><span class="check">✓</span> Soporte prioritario</li>
-      </ul>
-      <button class="plan-btn plan-btn-outline">Hablar con ventas</button>
-    </div>
-  </div>
-
-  <p class="pricing-note">
-    🔒 Pagos seguros con Stripe · 💳 Visa, Mastercard, OXXO Pay · 🇲🇽 Precios en USD
-  </p>
-</section>
-
-<!-- TESTIMONIALS -->
-<section class="testimonials-section">
-  <div class="section-tag">Lo que dicen</div>
-  <h2 class="section-title">La gente ya está<br>usando Escríbelo.</h2>
-
-  <div class="testimonials-grid">
-    <div class="testi-card">
-      <div class="testi-stars">★★★★★</div>
-      <p class="testi-text">"Transcribí una entrevista de 45 minutos en menos de 1 minuto. Antes me tardaba 3 horas haciéndolo a mano. Esto cambió mi vida como periodista."</p>
-      <div class="testi-author">
-        <div class="testi-avatar" style="background:rgba(255,107,43,0.1);">👩</div>
-        <div>
-          <div class="testi-name">Valeria M.</div>
-          <div class="testi-role">Periodista · Ciudad de México</div>
-        </div>
-      </div>
-    </div>
-    <div class="testi-card">
-      <div class="testi-stars">★★★★★</div>
-      <p class="testi-text">"Uso Escríbelo para convertir mis podcasts en posts de LinkedIn. Mi audiencia creció 3x desde que empecé a publicar más contenido con este flujo."</p>
-      <div class="testi-author">
-        <div class="testi-avatar" style="background:rgba(77,150,255,0.1);">👨</div>
-        <div>
-          <div class="testi-name">Carlos R.</div>
-          <div class="testi-role">Creator · Bogotá, Colombia</div>
-        </div>
-      </div>
-    </div>
-    <div class="testi-card">
-      <div class="testi-stars">★★★★★</div>
-      <p class="testi-text">"Grabo todas mis clases de la universidad y las transcibo aquí. Estudiar con el texto es 10 veces más rápido que ver el video otra vez."</p>
-      <div class="testi-author">
-        <div class="testi-avatar" style="background:rgba(107,203,119,0.1);">👩‍🎓</div>
-        <div>
-          <div class="testi-name">Sofía L.</div>
-          <div class="testi-role">Estudiante · Buenos Aires</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- FAQ -->
-<section class="faq-section" id="faq">
-  <div style="text-align:center;">
-    <div class="section-tag">Preguntas</div>
-    <h2 class="section-title">Dudas frecuentes</h2>
-  </div>
-
-  <div class="faq-grid">
-    <div class="faq-card">
-      <button class="faq-q" onclick="toggleFAQ(this)">
-        ¿Qué son los créditos?
-        <span class="faq-arrow">+</span>
-      </button>
-      <div class="faq-a">1 crédito = 1 minuto de audio transcrito. Si tu video dura 10 minutos, cuesta 10 créditos. El resumen con IA cuesta 2 créditos extra y la traducción 3 créditos. Los créditos nunca caducan.</div>
-    </div>
-    <div class="faq-card">
-      <button class="faq-q" onclick="toggleFAQ(this)">
-        ¿Funciona con videos en español?
-        <span class="faq-arrow">+</span>
-      </button>
-      <div class="faq-a">¡Claro que sí! Escríbelo está optimizado para español de México, Colombia, Argentina, España y toda Latinoamérica. También soporta más de 90 idiomas adicionales.</div>
-    </div>
-    <div class="faq-card">
-      <button class="faq-q" onclick="toggleFAQ(this)">
-        ¿Mis archivos están seguros?
-        <span class="faq-arrow">+</span>
-      </button>
-      <div class="faq-a">Sí. Tus archivos se procesan con encriptación TLS y se eliminan automáticamente después de 24 horas. Nunca compartimos tu contenido con nadie.</div>
-    </div>
-    <div class="faq-card">
-      <button class="faq-q" onclick="toggleFAQ(this)">
-        ¿Puedo transcribir videos de YouTube privados?
-        <span class="faq-arrow">+</span>
-      </button>
-      <div class="faq-a">Por ahora solo soportamos videos públicos y no listados. Si tu video es privado, puedes descargarlo primero y subirlo como archivo directamente.</div>
-    </div>
-    <div class="faq-card">
-      <button class="faq-q" onclick="toggleFAQ(this)">
-        ¿Cómo funciona el pago?
-        <span class="faq-arrow">+</span>
-      </button>
-      <div class="faq-a">Comprás créditos una vez y los usás cuando quieras. No hay suscripción mensual en los planes Gratis y Pro. Solo en Business. Aceptamos Visa, Mastercard y próximamente OXXO Pay.</div>
-    </div>
-    <div class="faq-card">
-      <button class="faq-q" onclick="toggleFAQ(this)">
-        ¿Qué tan precisa es la transcripción?
-        <span class="faq-arrow">+</span>
-      </button>
-      <div class="faq-a">Usamos OpenAI Whisper, el modelo más preciso del mercado. Con audio de buena calidad logramos más del 95% de precisión. Con audio ruidoso baja un poco pero sigue siendo la mejor opción.</div>
-    </div>
-  </div>
-</section>
-
-<!-- CTA FINAL -->
-<section class="cta-section">
-  <div class="cta-bg"></div>
-  <h2>¿A qué esperas?<br>¡Escríbelo ya!</h2>
-  <p>Empieza gratis. Sin tarjeta. Sin compromisos.<br>3 transcripciones gratis para que lo compruebes.</p>
-  <a href="#app" class="btn-white" onclick="goToApp()">Transcribir ahora — es gratis</a>
-  <p class="cta-note">✦ Más de 90 idiomas · Resultados en segundos · Cancela cuando quieras</p>
-</section>
-
-<!-- FOOTER -->
-<footer>
-  <a href="#" class="footer-logo">Escríbelo<span>.</span></a>
-  <div class="footer-links">
-    <a href="#">Términos de uso</a>
-    <a href="#">Privacidad</a>
-    <a href="#">API para developers</a>
-    <a href="#">Blog</a>
-    <a href="#">Contacto</a>
-  </div>
-  <p>© 2025 Escríbelo · Hecho con 🧡 para Latinoamérica</p>
-</footer>
-
-<!-- FLOATING CTA -->
-<a href="#app" class="floating-demo" onclick="goToApp()">
-  🎙️ Pruébalo gratis
-</a>
+<div class="toast" id="toast"></div>
 
 <script>
-function goToApp() {
-  // En producción: window.location.href = '/app.html'
-  const url = document.getElementById('heroYtInput')?.value;
-  window.location.href = 'app.html';
-}
+const API_BASE = 'https://transcribeai-production-62bc.up.railway.app';
+const USER_ID = 'user_' + Math.random().toString(36).slice(2, 9);
 
-function toggleFAQ(btn) {
-  const card = btn.closest('.faq-card');
-  const allCards = document.querySelectorAll('.faq-card');
-  allCards.forEach(c => { if (c !== card) c.classList.remove('open'); });
-  card.classList.toggle('open');
-}
+let state = {
+  source: 'file',
+  file: null,
+  ytUrl: '',
+  options: { language: 'auto', format: 'text', summarize: false, translate: false },
+  credits: 30,
+  result: null,
+  activeTab: 'transcript',
+};
 
-// Animaciones al hacer scroll
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.style.opacity = '1';
-      entry.target.style.transform = 'translateY(0)';
-    }
-  });
-}, { threshold: 0.1 });
-
-document.querySelectorAll('.feat-card, .step-card, .case-card, .plan-card, .testi-card').forEach(el => {
-  el.style.opacity = '0';
-  el.style.transform = 'translateY(24px)';
-  el.style.transition = 'opacity .6s ease, transform .6s ease';
-  observer.observe(el);
+document.addEventListener('DOMContentLoaded', () => {
+  setupDragDrop();
+  updateCostEstimate();
+  // Asegurar estado inicial correcto
+  document.getElementById('fileSection').style.display = '';
+  document.getElementById('ytSection').style.display = 'none';
 });
+
+// ── SOURCE TABS ── (FIX: control explícito por display)
+function switchSource(src) {
+  state.source = src;
+  document.querySelectorAll('.stab').forEach((b, i) => {
+    b.classList.toggle('active', (i === 0 && src === 'file') || (i === 1 && src === 'yt'));
+  });
+  document.getElementById('fileSection').style.display = src === 'file' ? '' : 'none';
+  document.getElementById('ytSection').style.display = src === 'yt' ? '' : 'none';
+  updateRunBtn();
+  updateCostEstimate();
+}
+
+function onFileSelect(e) {
+  const file = e.target.files?.[0];
+  if (!file) return;
+  state.file = file;
+  document.getElementById('uploadZone').style.display = 'none';
+  document.getElementById('fileSelected').style.display = 'flex';
+  document.getElementById('fileName').textContent = file.name;
+  document.getElementById('fileSize').textContent = formatBytes(file.size);
+  updateRunBtn();
+  updateCostEstimate();
+}
+
+function clearFile() {
+  state.file = null;
+  document.getElementById('uploadZone').style.display = '';
+  document.getElementById('fileSelected').style.display = 'none';
+  document.getElementById('fileInput').value = '';
+  updateRunBtn();
+  updateCostEstimate();
+}
+
+function setupDragDrop() {
+  const zone = document.getElementById('uploadZone');
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('hover'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('hover'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault(); zone.classList.remove('hover');
+    const file = e.dataTransfer.files[0];
+    if (file) onFileSelect({ target: { files: [file] } });
+  });
+}
+
+function formatBytes(b) {
+  if (b < 1024*1024) return (b/1024).toFixed(0) + ' KB';
+  return (b/1024/1024).toFixed(1) + ' MB';
+}
+
+function onYTInput() {
+  const url = document.getElementById('ytUrl').value.trim();
+  state.ytUrl = url;
+  const valid = /^(https?:\/\/)?(www\.)?(youtube\.com\/(watch\?v=|shorts\/)|youtu\.be\/).+/.test(url);
+  const status = document.getElementById('ytStatus');
+  if (url.length > 5) {
+    status.textContent = valid ? '✅ URL válida' : '❌ URL inválida';
+    status.style.color = valid ? 'var(--verde)' : 'var(--accent3)';
+  } else { status.textContent = ''; }
+  updateRunBtn();
+  updateCostEstimate();
+}
+
+function toggleOpt(key) {
+  state.options[key] = !state.options[key];
+  document.getElementById('toggle-' + key).classList.toggle('on', state.options[key]);
+  if (key === 'translate') {
+    document.getElementById('translateLangRow').style.display = state.options.translate ? '' : 'none';
+  }
+  updateCostEstimate();
+}
+
+function updateCostEstimate() {
+  const hasSource = state.source === 'file' ? !!state.file :
+    /^(https?:\/\/)?(www\.)?(youtube\.com\/(watch\?v=|shorts\/)|youtu\.be\/).+/.test(state.ytUrl);
+  if (!hasSource) { document.getElementById('costVal').textContent = '— créditos'; return; }
+  let cost = 1;
+  if (state.options.summarize) cost += 2;
+  if (state.options.translate) cost += 3;
+  document.getElementById('costVal').textContent = `~${cost}+ créditos`;
+}
+
+function updateRunBtn() {
+  const hasSource = state.source === 'file' ? !!state.file :
+    /^(https?:\/\/)?(www\.)?(youtube\.com\/(watch\?v=|shorts\/)|youtu\.be\/).+/.test(state.ytUrl);
+  document.getElementById('runBtn').disabled = !hasSource;
+  document.getElementById('runBtnBottom').disabled = !hasSource;
+}
+
+async function runTranscription() {
+  if (state.credits <= 0) { showCreditsModal(); return; }
+  showProgress();
+  try {
+    state.source === 'file' ? await transcribeFile() : await transcribeYouTube();
+  } catch (err) {
+    hideProgress();
+    showToast('❌ ' + (err.message || 'Error al transcribir'), 'error');
+  }
+}
+
+async function transcribeFile() {
+  await advanceProgress(1, 20, 'Cargando archivo...');
+  const formData = new FormData();
+  formData.append('file', state.file);
+  formData.append('language', document.getElementById('langSelect').value);
+  formData.append('output_format', document.getElementById('formatSelect').value);
+  formData.append('summarize', state.options.summarize);
+  formData.append('translate_to', state.options.translate ? document.getElementById('translateLang').value : '');
+  formData.append('user_id', USER_ID);
+  await advanceProgress(2, 45, 'Enviando a Whisper...');
+  const res = await fetch(`${API_BASE}/transcribe/file`, { method: 'POST', body: formData });
+  if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.detail || `Error ${res.status}`); }
+  await advanceProgress(3, 80, 'Procesando...');
+  const data = await res.json();
+  await advanceProgress(4, 95, 'Aplicando IA...');
+  await advanceProgress(5, 100, '¡Listo!');
+  setTimeout(() => showResult(data), 500);
+}
+
+async function transcribeYouTube() {
+  await advanceProgress(1, 15, 'Validando URL...');
+  await advanceProgress(2, 35, 'Descargando audio de YouTube...');
+  const res = await fetch(`${API_BASE}/transcribe/youtube`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      url: state.ytUrl,
+      language: document.getElementById('langSelect').value,
+      output_format: document.getElementById('formatSelect').value,
+      summarize: state.options.summarize,
+      translate_to: state.options.translate ? document.getElementById('translateLang').value : null,
+    }),
+  });
+  if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.detail || `Error ${res.status}`); }
+  await advanceProgress(3, 70, 'Transcribiendo...');
+  const data = await res.json();
+  await advanceProgress(4, 90, 'Finalizando...');
+  await advanceProgress(5, 100, '¡Completo!');
+  setTimeout(() => showResult(data), 500);
+}
+
+function showProgress() {
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('resultState').classList.remove('show');
+  document.getElementById('progressState').classList.add('show');
+  document.getElementById('runBtn').disabled = true;
+  document.getElementById('runBtnBottom').disabled = true;
+  for (let i = 1; i <= 5; i++) {
+    document.getElementById('step' + i).classList.remove('active', 'done');
+  }
+  updateProgressRing(0);
+}
+
+function hideProgress() {
+  document.getElementById('progressState').classList.remove('show');
+  document.getElementById('emptyState').style.display = '';
+  updateRunBtn();
+}
+
+async function advanceProgress(stepNum, pct, text) {
+  for (let i = 1; i < stepNum; i++) {
+    document.getElementById('step' + i).classList.remove('active');
+    document.getElementById('step' + i).classList.add('done');
+  }
+  if (stepNum <= 5) document.getElementById('step' + stepNum).classList.add('active');
+  document.getElementById('progressTitle').textContent = text;
+  updateProgressRing(pct);
+  document.getElementById('progressPct').textContent = pct + '%';
+  await sleep(400);
+}
+
+function updateProgressRing(pct) {
+  const offset = 251.2 - (pct / 100) * 251.2;
+  document.getElementById('progressRingFill').style.strokeDashoffset = offset;
+}
+
+function showResult(data) {
+  state.result = data;
+  document.getElementById('progressState').classList.remove('show');
+  document.getElementById('resultState').classList.add('show');
+  document.getElementById('transcriptEditor').value = data.transcript || '';
+  updateWordCount();
+  if (data.summary) {
+    document.getElementById('summaryTab').style.display = '';
+    document.getElementById('summaryContent').textContent = data.summary;
+  } else { document.getElementById('summaryTab').style.display = 'none'; }
+  if (data.translated) {
+    document.getElementById('translationTab').style.display = '';
+    document.getElementById('translationContent').textContent = data.translated;
+  } else { document.getElementById('translationTab').style.display = 'none'; }
+  const dur = data.duration_seconds;
+  document.getElementById('metaDuration').textContent = dur ? `${Math.floor(dur/60)}m ${Math.round(dur%60)}s` : '—';
+  document.getElementById('metaLang').textContent = data.detected_language || '—';
+  document.getElementById('metaCredits').textContent = data.credits_used || '—';
+  if (data.credits_remaining !== undefined) {
+    state.credits = data.credits_remaining;
+    document.getElementById('creditsDisplay').textContent = state.credits;
+  }
+  switchResultTab('transcript');
+  updateRunBtn();
+  showToast('✅ ¡Transcripción completada!', 'success');
+}
+
+function switchResultTab(tab) {
+  state.activeTab = tab;
+  document.querySelectorAll('.rtab').forEach(b => {
+    const map = { transcript: 'transcri', summary: 'resumen', translation: 'traducc' };
+    b.classList.toggle('active', b.textContent.toLowerCase().includes(map[tab]));
+  });
+  document.querySelectorAll('.result-pane').forEach(p => p.classList.remove('active'));
+  document.getElementById('pane-' + tab).classList.add('active');
+}
+
+function getCurrentText() {
+  if (state.activeTab === 'transcript') return document.getElementById('transcriptEditor').value;
+  if (state.activeTab === 'summary') return document.getElementById('summaryContent').textContent;
+  if (state.activeTab === 'translation') return document.getElementById('translationContent').textContent;
+  return '';
+}
+
+function exportAs(format) {
+  const text = getCurrentText();
+  if (!text) { showToast('No hay contenido para exportar', 'error'); return; }
+  if (format === 'pdf') { exportPDF(text); return; }
+  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `transcripcion.${format}`;
+  a.click();
+  showToast(`📄 Descargando ${format.toUpperCase()}...`, 'success');
+}
+
+function exportPDF(text) {
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Georgia,serif;font-size:13pt;line-height:1.8;margin:2cm;color:#222;}h1{font-size:18pt;}p{margin-bottom:12px;}</style></head><body><h1>Escríbelo — Transcripción</h1><p style="color:#666;font-size:10pt;">${new Date().toLocaleString('es-MX')}</p>${text.split('\n\n').map(p=>`<p>${p.replace(/\n/g,'<br>')}</p>`).join('')}</body></html>`;
+  const win = window.open('', '_blank');
+  win.document.write(html);
+  win.document.close();
+  win.onload = () => win.print();
+}
+
+function copyCurrentPane() {
+  const text = getCurrentText();
+  if (!text) return;
+  navigator.clipboard.writeText(text).then(() => showToast('✅ Copiado al portapapeles', 'success'));
+}
+
+function updateWordCount() {
+  const text = document.getElementById('transcriptEditor').value;
+  const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+  document.getElementById('wordCount').textContent = `${words.toLocaleString()} palabras`;
+}
+
+function showCreditsModal() { document.getElementById('creditsModal').classList.add('show'); }
+function closeModal() { document.getElementById('creditsModal').classList.remove('show'); }
+
+function buyPlan(plan) {
+  closeModal();
+  showToast('💳 Redirigiendo a Stripe...', 'success');
+  // TODO: window.location.href = `${API_BASE}/checkout?plan=${plan}&user_id=${USER_ID}`;
+}
+
+function showToast(msg, type = '') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast ' + type + ' show';
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 </script>
 </body>
 </html>
